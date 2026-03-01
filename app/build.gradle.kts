@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -28,10 +29,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // TODO: Replace with your real AdMob App ID for production
+            // ⚠️ IMPORTANT: Replace with your PRODUCTION AdMob App ID from Google AdMob Console
+            // Format: ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX
+            // Get it from: https://admob.google.com → Your App → App settings
             manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
         }
         debug {
+            // Test ID - safe for development (Google's official test ID)
             manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
         }
     }
@@ -73,6 +77,15 @@ dependencies {
 
     // AdMob
     implementation(libs.play.services.ads)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.realtime.db)
 
     debugImplementation(libs.androidx.ui.tooling)
 }

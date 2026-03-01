@@ -12,6 +12,8 @@ datastore = "1.1.1"
 kotlinxSerializationJson = "1.7.1"
 coroutines = "1.8.1"
 navigationCompose = "2.7.7"
+firebaseBom = "33.1.1"
+googleServices = "4.4.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,7 +43,17 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 # AdMob
 play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "admob" }
 
+# Firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
+firebase-storage = { group = "com.google.firebase", name = "firebase-storage-ktx" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
+firebase-realtime-db = { group = "com.google.firebase", name = "firebase-database-ktx" }
+
 [plugins]
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

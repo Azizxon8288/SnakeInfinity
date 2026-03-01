@@ -15,15 +15,33 @@ import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.snakeinfinity.game.BuildConfig
 
-// ── Test Ad Unit IDs (replace with real ones from AdMob console) ──────────────
+/**
+ * Ad Unit IDs with automatic switching between test and production
+ * Based on build type (debug/release)
+ *
+ * HOW TO UPDATE FOR PRODUCTION:
+ * 1. Replace BANNER_PRODUCTION with your AdMob Banner Ad Unit ID
+ * 2. Replace INTERSTITIAL_PRODUCTION with your AdMob Interstitial Ad Unit ID
+ * 3. Rebuild the release APK
+ * 4. Test with the release build before publishing to Play Store
+ */
 object AdUnitIds {
-    // TEST IDs — Safe to use during development
-    const val BANNER = "ca-app-pub-3940256099942544/6300978111"
-    const val INTERSTITIAL = "ca-app-pub-3940256099942544/1033173712"
-    // PRODUCTION (uncomment and replace when publishing):
-    // const val BANNER = "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"
-    // const val INTERSTITIAL = "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"
+    // Test Ad Unit IDs (safe for development & testing)
+    private const val BANNER_TEST = "ca-app-pub-3940256099942544/6300978111"
+    private const val INTERSTITIAL_TEST = "ca-app-pub-3940256099942544/1033173712"
+
+    // ⚠️ PRODUCTION: Replace these with your real AdMob Ad Unit IDs
+    private const val BANNER_PRODUCTION = "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"
+    private const val INTERSTITIAL_PRODUCTION = "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"
+
+    // Auto-select: Debug build = TEST, Release build = PRODUCTION
+    val BANNER: String
+        get() = if (BuildConfig.DEBUG) BANNER_TEST else BANNER_PRODUCTION
+
+    val INTERSTITIAL: String
+        get() = if (BuildConfig.DEBUG) INTERSTITIAL_TEST else INTERSTITIAL_PRODUCTION
 }
 
 /**

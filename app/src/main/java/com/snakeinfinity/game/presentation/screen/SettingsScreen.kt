@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.snakeinfinity.game.domain.model.GameSettings
 import com.snakeinfinity.game.domain.model.GameSpeed
 import com.snakeinfinity.game.domain.model.Theme
 import com.snakeinfinity.game.presentation.component.BannerAd
@@ -134,7 +133,7 @@ fun SettingsScreen(
             // About Section
             SettingsSection(title = "About") {
                 InfoRow("Version", "1.0.0")
-                InfoRow("Developer", "Snake Infinity Game Studio")
+                InfoRow("Developer", "Tayanch")
                 InfoRow("AdMob", "Enabled for monetization")
             }
         }
