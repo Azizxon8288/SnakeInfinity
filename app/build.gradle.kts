@@ -14,11 +14,11 @@ android {
         applicationId = "com.snakeinfinity.game"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
+        versionCode = 2
         versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // AdMob App ID — replace with your real ID from AdMob console
-        manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713" // Test App ID
+        manifestPlaceholders["admobAppId"] = "ca-app-pub-9204353853669673~8495198262" // Real App ID
     }
 
     buildTypes {
@@ -29,10 +29,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
             // ⚠️ IMPORTANT: Replace with your PRODUCTION AdMob App ID from Google AdMob Console
-            // Format: ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX
+            // Format: ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX (Note the '~')
             // Get it from: https://admob.google.com → Your App → App settings
-            manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-9204353853669673~8495198262" // Using Test ID for now to prevent crash
         }
         debug {
             // Test ID - safe for development (Google's official test ID)
