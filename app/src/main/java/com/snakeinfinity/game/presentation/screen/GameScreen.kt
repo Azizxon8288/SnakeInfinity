@@ -1,9 +1,14 @@
 package com.snakeinfinity.game.presentation.screen
 
 import android.app.Activity
+import androidx.compose.ui.draw.scale
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -54,6 +59,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
@@ -86,6 +92,24 @@ fun GameScreen(
     val showAd by viewModel.showAd.collectAsState()
     val context = LocalContext.current
     var hasStarted by remember { mutableStateOf(false) }
+    
+    // We can't easily trigger targetValue change without another state, 
+    // but we can use LaunchedEffect on state.score
+    var lastScore by remember { mutableStateOf(0) }
+    val scoreAnimationTriggerState = remember { mutableStateOf(1f) }
+    val animatedScoreScale by animateFloatAsState(
+        targetValue = scoreAnimationTriggerState.value,
+        animationSpec = tween(200),
+        finishedListener = { scoreAnimationTriggerState.value = 1f },
+        label = "score_scale"
+    )
+
+    LaunchedEffect(state.score) {
+        if (state.score > lastScore) {
+            scoreAnimationTriggerState.value = 1.3f
+        }
+        lastScore = state.score
+    }
 
     // Show interstitial ad when triggered
     LaunchedEffect(showAd) {
@@ -135,11 +159,13 @@ fun GameScreen(
                         fontSize = 11.sp,
                         letterSpacing = 2.sp
                     )
+// ...
                     Text(
                         "${state.score}",
                         color = NeonGreen,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Black,
+                        modifier = Modifier.scale(animatedScoreScale),
                         style = TextStyle(
                             shadow = Shadow(color = NeonGreen, blurRadius = 12f)
                         )
@@ -202,7 +228,10 @@ fun GameScreen(
             ) {
                 GameBoard(
                     snake = state.snake,
-                    food = state.food
+                    food = state.food,
+                    extraFood = state.extraFood,
+                    extraFoodTicksLeft = state.extraFoodTicksLeft,
+                    maxExtraFoodTicks = state.maxExtraFoodTicks
                 )
 
                 // Pause overlay
@@ -309,8 +338,36 @@ fun GameScreen(
     }
 }
 
+// ... existing imports ...
 @Composable
-private fun GameBoard(snake: List<Position>, food: Position) {
+private fun GameBoard(
+    snake: List<Position>, 
+    food: Position,
+    extraFood: Position? = null,
+    extraFoodTicksLeft: Int = 0,
+    maxExtraFoodTicks: Int = 0
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "food_pulse")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 0.8f,
+        targetValue = 1.2f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(600),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulse"
+    )
+
+    val extraPulseScale by infiniteTransition.animateFloat(
+        initialValue = 0.9f,
+        targetValue = 1.5f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(300),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "extra_pulse"
+    )
+
     Canvas(modifier = Modifier.fillMaxSize()) {
         val cellSize = size.width / BOARD_SIZE
         val padding = cellSize * 0.08f
@@ -374,22 +431,62 @@ private fun GameBoard(snake: List<Position>, food: Position) {
             brush = Brush.radialGradient(
                 colors = listOf(FoodColor, FoodColor.copy(alpha = 0f)),
                 center = foodCenter,
-                radius = cellSize * 0.8f
+                radius = cellSize * 0.8f * pulseScale
             ),
             center = foodCenter,
-            radius = cellSize * 0.8f
+            radius = cellSize * 0.8f * pulseScale
         )
         drawCircle(
             color = FoodColor,
             center = foodCenter,
-            radius = cellSize * 0.38f
+            radius = cellSize * 0.38f * pulseScale
         )
+
+        // Extra Food
+        extraFood?.let { pos ->
+            val exX = pos.x * cellSize
+            val exY = pos.y * cellSize
+            val exCenter = Offset(exX + cellSize / 2, exY + cellSize / 2)
+            
+            // Outer glow
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(NeonPurple, Color.Transparent),
+                    center = exCenter,
+                    radius = cellSize * 1.2f * extraPulseScale
+                ),
+                center = exCenter,
+                radius = cellSize * 1.2f * extraPulseScale
+            )
+            
+            // Special food item
+            drawCircle(
+                color = NeonPurple,
+                center = exCenter,
+                radius = cellSize * 0.45f * extraPulseScale
+            )
+            
+            // Timer indicator (arc around the extra food)
+            val sweepAngle = if (maxExtraFoodTicks > 0) {
+                (extraFoodTicksLeft.toFloat() / maxExtraFoodTicks.toFloat()) * 360f
+            } else 0f
+            
+            drawArc(
+                color = Color.White.copy(alpha = 0.7f),
+                startAngle = -90f,
+                sweepAngle = sweepAngle,
+                useCenter = false,
+                topLeft = Offset(exCenter.x - cellSize*0.6f, exCenter.y - cellSize*0.6f),
+                size = Size(cellSize*1.2f, cellSize*1.2f),
+                style = Stroke(width = 4f)
+            )
+        }
     }
 }
 
 @Composable
 private fun DPad(onDirection: (Direction) -> Unit) {
-    val btnSize = 56.dp
+    val btnSize = 52.dp
     val btnColor = Color(0xFF1C1C2E)
     val iconColor = NeonGreen
 

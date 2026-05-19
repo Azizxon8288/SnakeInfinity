@@ -10,6 +10,10 @@ enum class Direction { UP, DOWN, LEFT, RIGHT }
 data class SnakeState(
     val snake: List<Position> = listOf(Position(10, 10), Position(9, 10), Position(8, 10)),
     val food: Position = Position(5, 5),
+    val extraFood: Position? = null,
+    val extraFoodTicksLeft: Int = 0,
+    val maxExtraFoodTicks: Int = 0,
+    val foodEatenCount: Int = 0,
     val direction: Direction = Direction.RIGHT,
     val score: Int = 0,
     val isGameOver: Boolean = false,

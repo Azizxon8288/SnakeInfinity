@@ -94,15 +94,52 @@ class GameViewModel(
         }
 
         val ateFood  = newHead == current.food
-        val newSnake = if (ateFood) listOf(newHead) + current.snake
+        val ateExtra = current.extraFood != null && newHead == current.extraFood
+        
+        val newSnake = if (ateFood || ateExtra) listOf(newHead) + current.snake
                        else        listOf(newHead) + current.snake.dropLast(1)
-        val newScore = if (ateFood) current.score + (10 * current.level) else current.score
+        
+        var newScore = current.score
+        if (ateFood) newScore += (10 * current.level)
+        if (ateExtra) newScore += (50 * current.level) // Extra points for special food
+        
         val newLevel = (newScore / 100) + 1
         val newFood  = if (ateFood) randomFood(newSnake) else current.food
+        
+        val newFoodEatenCount = if (ateFood) current.foodEatenCount + 1 else current.foodEatenCount
+        var newExtraFood = current.extraFood
+        var newExtraFoodTicks = current.extraFoodTicksLeft
+        var newMaxExtraFoodTicks = current.maxExtraFoodTicks
+
+        if (ateExtra) {
+            newExtraFood = null
+            newExtraFoodTicks = 0
+            newMaxExtraFoodTicks = 0
+        } else if (ateFood && newFoodEatenCount % 5 == 0) {
+            // Spawn extra food after 5 normal foods
+            newExtraFood = randomFood(newSnake + newFood)
+            newExtraFoodTicks = (4000 / _settings.value.speed.intervalMs).toInt()
+            newMaxExtraFoodTicks = newExtraFoodTicks
+        } else if (newExtraFoodTicks > 0) {
+            newExtraFoodTicks--
+            if (newExtraFoodTicks == 0) {
+                newExtraFood = null
+                newMaxExtraFoodTicks = 0
+            }
+        }
 
         _state.update {
-            it.copy(snake = newSnake, food = newFood, direction = direction,
-                    score = newScore, level = newLevel)
+            it.copy(
+                snake = newSnake, 
+                food = newFood, 
+                extraFood = newExtraFood,
+                extraFoodTicksLeft = newExtraFoodTicks,
+                maxExtraFoodTicks = newMaxExtraFoodTicks,
+                foodEatenCount = newFoodEatenCount,
+                direction = direction,
+                score = newScore, 
+                level = newLevel
+            )
         }
     }
 
