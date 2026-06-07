@@ -14,8 +14,8 @@ android {
         applicationId = "com.snakeinfinity.game"
         minSdk = 26
         targetSdk = 35
-        versionCode = 5
-        versionName = "1.2.0"
+        versionCode = 6
+        versionName = "1.3.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // AdMob App ID — replace with your real ID from AdMob console
         manifestPlaceholders["admobAppId"] = "ca-app-pub-9204353853669673~8495198262" // Real App ID

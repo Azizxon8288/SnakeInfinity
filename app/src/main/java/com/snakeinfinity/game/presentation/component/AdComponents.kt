@@ -33,8 +33,8 @@ object AdUnitIds {
     private const val INTERSTITIAL_TEST = "ca-app-pub-3940256099942544/1033173712"
 
     // ⚠️ PRODUCTION: Replace these with your real AdMob Ad Unit IDs
-    private const val BANNER_PRODUCTION = "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"
-    private const val INTERSTITIAL_PRODUCTION = "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"
+    private const val BANNER_PRODUCTION = "ca-app-pub-9204353853669673/3705906017"
+    private const val INTERSTITIAL_PRODUCTION = "ca-app-pub-9204353853669673/2368234921"
 
     // Auto-select: Debug build = TEST, Release build = PRODUCTION
     val BANNER: String
